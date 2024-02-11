@@ -9,7 +9,8 @@ A simple password manager created in HTML, CSS, and pure JavaScript.
 
 - Create and save a password database
 - Load an existing database
-- View, add, and export passwords
+- View, add, edit, and remove passwords
+- Export passwords in encrypted JSON format
 
 ## How to Use
 
@@ -24,14 +25,17 @@ A simple password manager created in HTML, CSS, and pure JavaScript.
 
 ```javascript
 function renderPasswords() {
+    // Function to render password entries in the content container
     var contentContainer = $("#content-container");
     contentContainer.html("");
 
+    // Loop through each password entry in the passwords array
     $.each(passwords, function(index, password) {
+        // Create HTML elements for each password entry
         var passwordEntry = $("<div>").addClass("password-entry");
-
         var passwordBox = $("<div>").addClass("password-box");
 
+        // Input fields for password name and password
         var nameInput = $("<input>").attr({
             type: "text",
             value: password.name,
@@ -44,13 +48,24 @@ function renderPasswords() {
             readonly: true,
         });
 
+        // Copy, edit, and remove buttons for each password entry
         var copyButton = $("<button>").text("Copy");
-
         copyButton.click(function() {
             copyToClipboard(password.password);
         });
 
-        passwordBox.append(nameInput, passwordInput, copyButton);
+        var editButton = $("<button>").text("Edit");
+        editButton.click(function() {
+            // Functionality for editing password name and password
+        });
+
+        var removeButton = $("<button>").text("Remove");
+        removeButton.click(function() {
+            // Functionality for removing the password entry
+        });
+
+        // Append elements to the password box and entry
+        passwordBox.append(nameInput, passwordInput, copyButton, editButton, removeButton);
         passwordEntry.append(passwordBox);
         contentContainer.append(passwordEntry);
     });
@@ -59,23 +74,25 @@ function renderPasswords() {
 }
 ```
 
-The `renderPasswords` function iterates through the `passwords` array and dynamically creates HTML elements to display each password entry. It creates input fields for the password name and password itself, along with a "Copy" button that allows users to copy the password to the clipboard.
+The `renderPasswords` function dynamically generates HTML elements for each password entry, providing options to copy, edit, and remove passwords. Users can interact with the password entries to manage their data effectively.
 
 ### Encrypting Content
 
 ```javascript
 function encrypt(content, password) {
+    // Function to encrypt content using the given password
     var encryptedContent = CryptoJS.AES.encrypt(content, password).toString();
     return encryptedContent;
 }
 ```
 
-The `encrypt` function uses the CryptoJS library to encrypt content using the AES encryption algorithm with a given password. It then returns the encrypted content as a string.
+The `encrypt` function utilizes the AES encryption algorithm from CryptoJS to encrypt content with a specified password. This ensures that sensitive data is securely stored and accessed only with the correct password.
 
 ### Decrypting Content
 
 ```javascript
 function decrypt(content, password) {
+    // Function to decrypt encrypted content using the provided password
     try {
         var decryptedContent = CryptoJS.AES.decrypt(content, password).toString(CryptoJS.enc.Utf8);
         return decryptedContent;
@@ -85,7 +102,7 @@ function decrypt(content, password) {
 }
 ```
 
-The `decrypt` function decrypts the encrypted content using the provided password. It catches any errors that may occur during the decryption process and returns `null` if decryption fails.
+The `decrypt` function is crucial for decrypting encrypted content with the correct password. It handles decryption errors to prevent data loss or corruption, ensuring that users can securely access their stored passwords.
 
 ## Contact
 

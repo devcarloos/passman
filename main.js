@@ -1,26 +1,26 @@
-$(document).ready(function() {
+$(document).ready(function () {
     var passwords = [];
     var debug = false;
 
-    $("#create-button").click(function() {
+    $("#create-button").click(function () {
         debugLog("Create Database button clicked");
         $("#buttons-container").hide();
         $("#content-container").show();
         renderPasswords();
     });
 
-    $("#load-button").click(function() {
+    $("#load-button").click(function () {
         debugLog("Load Database button clicked");
         var fileInput = $("<input>").attr({
             type: "file",
             accept: ".json",
         }).css("display", "none");
 
-        fileInput.change(function(event) {
+        fileInput.change(function (event) {
             var file = event.target.files[0];
             var reader = new FileReader();
 
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                 debugLog("File loaded for import");
                 var fileContent = e.target.result;
                 var masterPassword = prompt("Enter your master password:");
@@ -50,7 +50,7 @@ $(document).ready(function() {
         fileInput.click();
     });
 
-    $("#debug-button").click(function() {
+    $("#debug-button").click(function () {
         debug = !debug;
         $("#debug-button").text(`Debug: ${debug ? "On" : "Off"}`);
         debugLog(`Debug mode: ${debug ? "On" : "Off"}`);
@@ -61,7 +61,7 @@ $(document).ready(function() {
         var contentContainer = $("#content-container");
         contentContainer.html("");
 
-        $.each(passwords, function(index, password) {
+        $.each(passwords, function (index, password) {
             var passwordEntry = $("<div>").addClass("password-entry");
 
             var passwordBox = $("<div>").addClass("password-box");
@@ -80,11 +80,36 @@ $(document).ready(function() {
 
             var copyButton = $("<button>").text("Copy");
 
-            copyButton.click(function() {
+            copyButton.click(function () {
                 copyToClipboard(password.password);
             });
 
-            passwordBox.append(nameInput, passwordInput, copyButton);
+            var editButton = $("<button>").text("Edit");
+            var removeButton = $("<button>").text("Remove");
+
+            editButton.click(function () {
+                var newName = prompt("Enter new name:");
+                var newPassword = prompt("Enter new password:");
+
+                if (newName !== null && newPassword !== null) {
+                    passwords[index] = {
+                        name: newName,
+                        password: newPassword
+                    };
+                    renderPasswords();
+                }
+            });
+
+            removeButton.click(function () {
+                var confirmRemove = confirm("Are you sure you want to remove this password?");
+
+                if (confirmRemove) {
+                    passwords.splice(index, 1);
+                    renderPasswords();
+                }
+            });
+
+            passwordBox.append(nameInput, passwordInput, copyButton, editButton, removeButton);
             passwordEntry.append(passwordBox);
             contentContainer.append(passwordEntry);
         });
@@ -92,7 +117,7 @@ $(document).ready(function() {
         var addButton = $("<button>").attr("id", "add-button").text("Add");
         var exportButton = $("<button>").attr("id", "export-button").text("Export");
 
-        addButton.click(function() {
+        addButton.click(function () {
             var name = prompt("Enter name:");
             var password = prompt("Enter password:");
 
@@ -105,7 +130,7 @@ $(document).ready(function() {
             }
         });
 
-        exportButton.click(function() {
+        exportButton.click(function () {
             var masterPassword = prompt("Enter your master password:");
 
             if (masterPassword !== null) {
